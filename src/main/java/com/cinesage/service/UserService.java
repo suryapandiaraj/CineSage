@@ -6,16 +6,20 @@ import java.util.Comparator;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cinesage.model.Ticket;
 import com.cinesage.model.User;
 import com.cinesage.repository.UserRepository;
+import com.cinesage.exception.UserNotFoundException;
+import com.cinesage.exception.EmptyTicketsListException;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
 
+    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -27,27 +31,27 @@ public class UserService {
     }
 
     // get all users
-    public List<User> getUsers() throws Exception {
+    public List<User> getUsers() throws UserNotFoundException {
         List<User> usersList = userRepository.findAll();
         usersList.sort(Comparator.comparing(User::getUserId));
         if (usersList.size() > 0) {
-            throw new Exception("No user found!");
+            throw new UserNotFoundException("No users found!");
         }
         return usersList;
     }
 
     // get user by userId
-    public User getUser(String userId) throws Exception {
+    public User getUser(String userId) throws UserNotFoundException {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             return user.get();
         } else {
-            throw new Exception("User not found!");
+            throw new UserNotFoundException("Invalid User Id!");
         }
     }
 
     // get tickets booked by a user
-    public List<Ticket> getTickets(String userId) throws Exception {
+    public List<Ticket> getTickets(String userId) throws UserNotFoundException, EmptyTicketsListException {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             if (user.get().getTicketsList().size() > 0) {
@@ -55,10 +59,10 @@ public class UserService {
                 ticketsList.sort(Comparator.comparing(Ticket::getBookingDate));
                 return ticketsList;
             } else {
-                throw new Exception("No tickets booked!");
+                throw new EmptyTicketsListException("No tickets booked!");
             }
         } else {
-            throw new Exception("User not found!");
+            throw new UserNotFoundException("Invalid User Id!");
         }
     }
 

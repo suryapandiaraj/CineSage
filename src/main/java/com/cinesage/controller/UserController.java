@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
     private final UserService userService;
 
+    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -28,7 +28,7 @@ public class UserController {
     // check
     @GetMapping("/")
     public String home() {
-        return new String("Hello, World!");
+        return "Hello, World!";
     }
 
     // register user

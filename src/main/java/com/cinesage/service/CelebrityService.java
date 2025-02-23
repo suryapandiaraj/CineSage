@@ -1,5 +1,7 @@
 package com.cinesage.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.cinesage.model.Celebrity;
@@ -16,7 +18,9 @@ public class CelebrityService {
     }
 
     public Celebrity getCelebrity(String celebrityId) {
-        return celebrityRepository.findById(celebrityId).get();
+        // return celebrityRepository.findById(celebrityId).get();
+        Optional<Celebrity> celebrity = celebrityRepository.findById(celebrityId);
+        return celebrity.get();
     }
 
 }
